@@ -1,0 +1,40 @@
+
+
+<%- include("partials/_header")  %>
+<br><br>
+<!--        TABLA CON TODOS LOS DATOS        -->
+<div class="container">
+    <h2 class="text-center">General Data Table</h2>
+    <h6 class="text-center">( Mongo Information )</h6>
+    <br>
+    <table class="table" id="table_id">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Departament</th>
+                <th scope="col">Age</th>
+                <th scope="col">Form Of Contagion</th>
+                <th scope="col">State</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (data) { %>
+                <% for (var i = 0; i< data.length; i++){ %>
+                    <tr>
+                        <td><%= (i+1) %></td>
+                        <td><%= data[i].name %></td>
+                        <td><%= data[i].depto %></td>
+                        <td><%= data[i].age %></td>
+                        <td><%= data[i].form %></td>
+                        <td><%= data[i].state %></td>
+                    </tr>
+                <% } %>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+<br><br>
+
+
+<%- include("partials/_footer")  %>

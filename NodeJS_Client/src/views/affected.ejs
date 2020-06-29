@@ -1,0 +1,98 @@
+<%- include("partials/_header")  %>
+<br><br>
+<!--        GRAFICA DE BARRAS CON LA CANTIDAD DE AFECTADOS POR RANGO DE EDADES -->
+<div class="container">
+    <h2 class="text-center">Affected By Age Range</h2>
+    <h6 class="text-center">( Redis Information )</h6>
+</div>
+<br>
+<div>
+    <div id="top_x_div"  style="width: 900px; height: 500px; margin: auto;"></div>
+</div>
+<br>
+<br>
+<br>
+<!--        TABLA CON TODOS LOS DATOS        -->
+<div class="container">
+    <table class="table" id="table_id">
+        <thead>
+            <tr>
+                <th scope="col">Interval</th>
+                <th scope="col">Quantity</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (dataQ) { %>
+                <% for (var i = 0; i< dataQ.length; i++){ %>
+                    <tr>
+                        <td><%= dataQ[i].rango %></td>
+                        <td><%= dataQ[i].cant %></td>
+                    </tr>
+                <% } %>
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+<br><br>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript">
+
+    google.charts.load('current', { 'packages': ['bar'] });
+    google.charts.setOnLoadCallback(drawStuff);
+
+    function drawStuff() {
+        var data = new google.visualization.arrayToDataTable([
+            ['Age', 'Quantity'],
+            ["Begin", 0]
+        ]);
+
+        var table = document.getElementById('table_id'), 
+        rows = table.getElementsByTagName('tr'),
+        i, j, cells;
+        var r = [];
+        var c = [];
+        for (i = 0, j = rows.length; i < j; ++i) {
+            cells = rows[i].getElementsByTagName('td');
+            if (!cells.length) {
+                continue;
+            }
+            r[i-1] = cells[0].innerHTML;
+            c[i-1] = cells[1].innerHTML;
+        }
+        for (let i = 0; i < r.length; i++) {
+            //console.log("["+r[i]+", "+c[i]+"]");
+            data.addRow([r[i], parseInt(c[i])]);
+        }
+        data.removeRow(0);
+
+
+        var options = {
+            title: 'Chess opening moves',
+            width: 900,
+            legend: { position: 'none' },
+            chart: {
+                title: 'Age vs Quantity',
+                subtitle: 'Redis Information'
+            },
+            bars: 'horizontal', // Required for Material Bar Charts.
+            axes: {
+                x: {
+                    0: { side: 'top', label: 'Quantity' } // Top x-axis.
+                }
+            },
+            bar: { groupWidth: "90%" }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('top_x_div'));
+        chart.draw(data, options);
+    };
+</script>
+
+<%- include("partials/_footer")  %>

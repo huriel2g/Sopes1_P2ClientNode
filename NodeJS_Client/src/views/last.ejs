@@ -1,0 +1,37 @@
+<%- include("partials/_header")  %>
+
+<br><br>
+<!--        ULTIMO CASO AGREGADO -->
+<div class="container">
+    <h2 class="text-center">Last Case Added</h2>
+    <h6 class="text-center">( Redis Information )</h6>
+    <br>
+    <table class="table" id="table_id">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Departament</th>
+                <th scope="col">Age</th>
+                <th scope="col">Form Of Contagion</th>
+                <th scope="col">State</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (data) { %>
+            <tr>
+                <td><%= 1 %></td>
+                <td><%= data.name %></td>
+                <td><%= data.depto %></td>
+                <td><%= data.age %></td>
+                <td><%= data.form %></td>
+                <td><%= data.state %></td>
+            </tr>
+
+            <% } %>
+        </tbody>
+    </table>
+</div>
+
+
+<%- include("partials/_footer")  %>
