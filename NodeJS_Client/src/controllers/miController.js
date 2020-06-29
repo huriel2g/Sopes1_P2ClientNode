@@ -28,7 +28,7 @@ controller.AllData = (req, res) => {
             var dbo = db.db("proyecto2");
             dbo.collection("casos").find().toArray(function (err, result) {
                 if (err) throw err;
-                console.log(result);
+                //console.log(result);
                 db.close();
                 res.render('alldata.ejs', { data: result });
             });
@@ -74,7 +74,7 @@ function redirigirTop(departament, res) {
                     }
                     quantity = []
                     res.render('top3.ejs', { data: top });
-                }, 3000);
+                }, 2500);
             });
     });
 }
@@ -147,10 +147,10 @@ function redirigir(departament, res) {
                 quantity.push({ depto, cant })
             }
             setTimeout(function () {
-                console.log(quantity)
+                //console.log(quantity)
                 res.render('deptos.ejs', { data: quantity });
                 quantity = []
-            }, 3000);
+            }, 2500);
         });
     });
 }
@@ -160,9 +160,13 @@ controller.Last = (req, res) => {
     try {
         client.lrange('proyecto2', -1, -1, function (err, result) {
             if(!err){
-                var mijson = JSON.parse(result);
-                //console.log(mijson)
-                res.render('last.ejs', { data: mijson });
+                if(result.length != 0){
+                    var mijson = JSON.parse(result);
+                    res.render('last.ejs', { data: mijson });
+                }else{
+                    console.log("no hay data en redis")
+                    res.render('last.ejs', { data: [] });    
+                }
             }else{
                 console.log("hubo un error")
                 res.render('last.ejs', { data: [] });
@@ -179,6 +183,7 @@ controller.Last = (req, res) => {
 // 5.AFECTADOS POR RANGO DE EDADES (Redis/Grafica de Barras)
 controller.AffectedAge = (req, res) => {
     client.lrange('proyecto2', 0, -1, function (err, result) {
+        
         res.render('affected.ejs', { dataQ: tell(result) })
     });
 }
