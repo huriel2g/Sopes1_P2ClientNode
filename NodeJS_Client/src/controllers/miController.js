@@ -1,11 +1,11 @@
 
 // Conexion a MongoDB
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://34.70.196.45:27017/";
+var url = "mongodb://34.70.138.254:27017/";
 
 // Conexion a Redis
 var redis = require('redis');
-var client = redis.createClient("http://34.70.196.45"); //creates a new client
+var client = redis.createClient("http://34.70.138.254"); //creates a new client
 
 const controller = {};
 
@@ -159,7 +159,7 @@ function redirigir(departament, res) {
 controller.Last = (req, res) => {
     try {
         client.lrange('proyecto2', -1, -1, function (err, result) {
-            if(!result){
+            if(!err){
                 var mijson = JSON.parse(result);
                 //console.log(mijson)
                 res.render('last.ejs', { data: mijson });
