@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const miController = require('../controllers/miController')
 
+router.get('/delete', miController.Delete);
+
 router.get('/', miController.CargandoPage);
 
 router.get('/alldata', miController.AllData);

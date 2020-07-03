@@ -1,11 +1,11 @@
 
 // Conexion a MongoDB
 var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://34.70.138.254:27017/";
+var url = "mongodb://35.238.79.144:27017/";
 
 // Conexion a Redis
 var redis = require('redis');
-var client = redis.createClient("http://34.70.138.254"); //creates a new client
+var client = redis.createClient("http://35.238.79.144"); //creates a new client
 
 const controller = {};
 
@@ -15,8 +15,24 @@ var depart = ["Alta Verapaz", "Baja Verapaz", "Chimaltenango", "Chiquimula",
     "Izabal", "Jalapa", "Jutiapa", "Peten",
     "Quetzaltenango", "Quiche", "Retalhuleu", "Sacatepequez",
     "San Marcos", "Santa Rosa", "Solola", "Suchitepequez",
-    "Totonicapan", "Zacapa"]
+    "Totonicapan", "Zacapa"];
 
+// ELIMINACION
+controller.Delete = (req, res) => {
+    client.del('proyecto2');
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("proyecto2");
+        dbo.collection("casos").remove({}, function (err, obj) {
+            if (err) throw err;
+            console.log("delet all");
+            db.close();
+        });
+    });
+    res.render('index.ejs');
+}
+
+// 0. INDEX
 controller.CargandoPage = (req, res) => {
     res.render('index.ejs');
 }
@@ -53,29 +69,29 @@ controller.Top3 = (req, res) => {
 }
 function redirigirTop(departament, res) {
     MongoClient.connect(url, function (err, db) {
-            var dbo = db.db("proyecto2");
-            var query = { depto: "" + departament };
-            dbo.collection("casos").find(query).count(function (err, result) {
-                if (err) throw err;
-                db.close();
-                var cant = result;
-                if (result != 0) {
-                    var depto = departament;
-                    quantity.push({ depto, cant })
+        var dbo = db.db("proyecto2");
+        var query = { depto: "" + departament };
+        dbo.collection("casos").find(query).count(function (err, result) {
+            if (err) throw err;
+            db.close();
+            var cant = result;
+            if (result != 0) {
+                var depto = departament;
+                quantity.push({ depto, cant })
+            }
+            setTimeout(function () {
+                var top = [];
+                if (quantity.length > 0) {
+                    quantity = Burbuja(quantity)
+                    top.push(quantity.pop())
+                    top.push(quantity.pop())
+                    top.push(quantity.pop())
+                    //console.log(Burbuja(quantity));   
                 }
-                setTimeout(function () {
-                    var top = [];
-                    if (quantity.length > 0) {
-                        quantity = Burbuja(quantity)
-                        top.push(quantity.pop())
-                        top.push(quantity.pop())
-                        top.push(quantity.pop())
-                        //console.log(Burbuja(quantity));   
-                    }
-                    quantity = []
-                    res.render('top3.ejs', { data: top });
-                }, 2500);
-            });
+                quantity = []
+                res.render('top3.ejs', { data: top });
+            }, 2500);
+        });
     });
 }
 function Burbuja(lista) {
@@ -159,31 +175,31 @@ function redirigir(departament, res) {
 controller.Last = (req, res) => {
     try {
         client.lrange('proyecto2', -1, -1, function (err, result) {
-            if(!err){
-                if(result.length != 0){
+            if (!err) {
+                if (result.length != 0) {
                     var mijson = JSON.parse(result);
                     res.render('last.ejs', { data: mijson });
-                }else{
+                } else {
                     console.log("no hay data en redis")
-                    res.render('last.ejs', { data: [] });    
+                    res.render('last.ejs', { data: [] });
                 }
-            }else{
+            } else {
                 console.log("hubo un error")
                 res.render('last.ejs', { data: [] });
             }
-            
-        });    
+
+        });
     } catch (error) {
         res.render('last.ejs', { data: [] });
         //res.render('alldata.ejs', { data: [{ "name": "-", "depto": "-", "age": 0, "form": "-", "state": "-" }] });
     }
-    
+
 }
 
 // 5.AFECTADOS POR RANGO DE EDADES (Redis/Grafica de Barras)
 controller.AffectedAge = (req, res) => {
     client.lrange('proyecto2', 0, -1, function (err, result) {
-        
+
         res.render('affected.ejs', { dataQ: tell(result) })
     });
 }
